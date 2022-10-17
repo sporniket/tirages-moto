@@ -1,0 +1,13 @@
+#!/bin/bash
+# create the MO5 tape archive
+# $1 : the install location, if specified
+
+### build
+CC="python3 -m moto_lst2bas"
+TAR="python3 -m moto_tar"
+SRC="src/tirages.lst"
+BAS="${SRC%.lst}.bas"
+K7_MO5="tirages-mo5.k7"
+${CC} ${SRC},a
+${TAR} -cv ${K7_MO5} ${BAS},a
+
