@@ -1,0 +1,9 @@
+#!/bin/bash
+# reformat the main source
+
+NL="python3 -m moto_nl"
+PRETTIER="python3 -m moto_prettier"
+SRC="src/tirages.lst"
+TARGET="${SRC}.tmp"
+${NL} ${SRC} | ${PRETTIER} > ${TARGET}
+mv ${TARGET} ${SRC}
