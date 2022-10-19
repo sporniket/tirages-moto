@@ -1,0 +1,51 @@
+name: Prepare a release
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  release:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v3
+      with:
+        python-version: 3.8.10
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install moto-tools-by-sporniket
+    
+    - name: Version suffix
+      run: echo "::set-output name=version::$(echo "${{ github.ref_name }}" | cut -c 2-)"
+      id: suffix
+    
+    - name : Create MO5 tape archive
+      run: ./build
+  
+    - name: Init release
+      uses: actions/create-release@v1
+      id: create_release
+      with:
+        draft: true
+        prerelease: false
+        release_name: Version ${{ steps.suffix.outputs.version }}
+        tag_name: ${{ github.ref }}
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+
+    - name: Upload release archive
+      uses: actions/upload-release-asset@v1
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./tirages-mo5.k7
+        asset_name: tirages-mo5.k7
+        asset_content_type: application/octet-stream
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
